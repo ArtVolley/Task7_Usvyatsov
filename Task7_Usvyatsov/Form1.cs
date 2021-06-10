@@ -33,9 +33,9 @@ namespace Task7_Usvyatsov
             teX_.Text = "0,026";
             teD.Text = "0,012";
 
-            teEi.BackColor = Color.LightPink;
-            teEs.BackColor = Color.LightPink;
-            teD.BackColor = Color.LightBlue;
+            teEi.BackColor = Color.Red;
+            teEs.BackColor = Color.Red;
+            teD.BackColor = Color.Blue;
 
             buDraw.Click += BuDraw_Click;
         }
@@ -46,7 +46,7 @@ namespace Task7_Usvyatsov
             ei = Convert.ToDouble(teEi.Text) * scaleAll;
             es = Convert.ToDouble(teEs.Text) * scaleAll;
             x_ = Convert.ToDouble(teX_.Text) * scaleAll;
-            d = Convert.ToDouble(teD.Text) * scaleAll;
+            d = Convert.ToDouble(teD.Text);
 
             // graphics tools
             Graphics gGraph = pxGraph.CreateGraphics();
@@ -68,7 +68,7 @@ namespace Task7_Usvyatsov
             DrawE(gGraph, pE);
 
             // changed
-            x_changed = ei  + d * 3;
+            x_changed = x_ + ei - (x_ - d * scaleAll * 3);
             grOutChanged.Text = "Выходные данные при x (ср. зн.) = " + x_changed / scaleAll;
 
             gGraphChanged.DrawString("Расположение после подналадки", new Font("Arial", 10), Brushes.Black, 2, 2);
@@ -122,12 +122,12 @@ namespace Task7_Usvyatsov
 
         private void DrawD(Graphics g, Pen p, double x_)
         {
-            g.DrawLine(p, (int)((3 * d + x_) * scaleX) + Width / 4, 0, (int)((3 * d + x_) * scaleX) + Width / 4, Height);
-            g.DrawLine(p, (int)((-3 * d + x_) * scaleX) + Width / 4, 0, (int)((-3 * d + x_) * scaleX) + Width / 4, Height);
+            g.DrawLine(p, (int)((3 * scaleAll * d + x_) * scaleX) + Width / 4, 0, (int)((3 * scaleAll * d + x_) * scaleX) + Width / 4, Height);
+            g.DrawLine(p, (int)((-3 * scaleAll * d + x_) * scaleX) + Width / 4, 0, (int)((-3 * scaleAll * d + x_) * scaleX) + Width / 4, Height);
             g.DrawString("3σ", new Font("Arial", 7), Brushes.Blue, 
-                (int)((3 * d + x_) * scaleX) + Width / 4, Height * 3 / 4);
+                (int)((3 * scaleAll * d + x_) * scaleX) + Width / 4, Height * 3 / 4);
             g.DrawString("-3σ", new Font("Arial", 7), Brushes.Blue,
-                (int)((-3 * d + x_) * scaleX) + Width / 4, Height * 3 / 4);
+                (int)((-3 * scaleAll * d + x_) * scaleX) + Width / 4, Height * 3 / 4);
         }
 
         //grid
@@ -145,7 +145,7 @@ namespace Task7_Usvyatsov
         // FUNCs
         private double FunctionGraph(double x, double x_)
         {
-            return (1 / (d / scaleAll * Math.Sqrt(2 * Math.PI))) * Math.Pow(Math.E, -Math.Pow(x - x_, 2) / 2 * Math.Pow(d / scaleAll, 2));
+            return (1 / (d * Math.Sqrt(2 * Math.PI))) * Math.Pow(Math.E, -Math.Pow(x - x_, 2) / 2 * Math.Pow(d, 2));
         }
 
         private double F(double z0, double z)
@@ -178,17 +178,17 @@ namespace Task7_Usvyatsov
 
         private string Fok(double x)
         {
-            return Convert.ToString( (F(0, (es - x) / (d)) - F(0, (ei - x) / (d)) )* 100 );
+            return Convert.ToString( (F(0, (es - x) / (d * scaleAll)) - F(0, (ei - x) / (d * scaleAll)) )* 100 );
         }
 
         private string Funfix(double x)
         {
-            return Convert.ToString((F(0, (ei - x) / (d)) - F(0, -3)) * 100);
+            return Convert.ToString((F(0, (ei - x) / (d * scaleAll)) - F(0, -3)) * 100);
         }
 
         private string Ffix(double x)
         {
-            return Convert.ToString((F(0, 3) - F(0, (es - x) / (d))) * 100);
+            return Convert.ToString((F(0, 3) - F(0, (es - x) / (d * scaleAll))) * 100);
         }
     }
 }
